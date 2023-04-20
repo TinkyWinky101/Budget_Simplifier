@@ -1,0 +1,14 @@
+Income
+Joey
+1.0
+Dancing
+HOURLY
+200.0
+PetCo
+Expense
+Davey
+17.0
+Bills
+YEARLY
+1000.0
+Starbucks
