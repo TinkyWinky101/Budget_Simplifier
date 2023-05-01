@@ -1,6 +1,6 @@
 package com.example.budget_simplifier_v2;
 
-public class BudgetItem {
+public abstract class BudgetItem {
     public enum Period{NONE, HOURLY, DAILY, WEEKLY, MONTHLY, YEARLY};
     //Data members
     private String name; //name of the item we create
