@@ -35,41 +35,28 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="Box" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="Box" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.budget_simplifier_v2.ItemPageController">
   <children>
     <MenuBar fx:id="menu" VBox.vgrow="NEVER">
       <menus>
         <Menu fx:id="fileOption" mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" text="New Budget Item" />
-            <MenuItem mnemonicParsing="false" text="Save Items To File" />
-            <MenuItem mnemonicParsing="false" text="Load Items From File" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
-          </items>
-        </Menu>
-        <Menu fx:id="editOption" mnemonicParsing="false" text="Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Undo" />
-            <MenuItem mnemonicParsing="false" text="Redo" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Cut" />
-            <MenuItem mnemonicParsing="false" text="Copy" />
-            <MenuItem mnemonicParsing="false" text="Paste" />
-            <MenuItem mnemonicParsing="false" text="Delete" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Select All" />
-            <MenuItem mnemonicParsing="false" text="Unselect All" />
+            <MenuItem fx:id="newBudgetItemThing" mnemonicParsing="false" onAction="#createNewItem" text="New Budget Item" />
+            <MenuItem fx:id="saveItemsOption" mnemonicParsing="false" onAction="#saveItemToFile" text="Save Items To File" />
+            <MenuItem fx:id="loadItemOption" mnemonicParsing="false" onAction="#loadItemFromFile" text="Load Items From File" />
+                  <MenuItem fx:id="deleteOption" mnemonicParsing="false" onAction="#deleteSelection" text="Delete Selected Row" />
+                  <MenuItem fx:id="ReportOption" mnemonicParsing="false" onAction="#showReport" text="Report View" />
+            <MenuItem fx:id="quitChoice" mnemonicParsing="false" onAction="#quitApplication" text="Quit" />
           </items>
         </Menu>
         <Menu fx:id="helpOption" mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+            <MenuItem fx:id="helpChoice" mnemonicParsing="false" text="About BudgetSimplifier" />
           </items>
         </Menu>
       </menus>

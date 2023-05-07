@@ -38,6 +38,7 @@ class BudgetItemManager
             BudgetList.add(budget_item); //repeated code
         }
 
+
     }
 
     public void modifyBudgetItem(int indexNumber, boolean isExpense, TableColumn.CellEditEvent editedAtribute, int typeOfEdit) //Modify the item user selects with key(name)
@@ -48,11 +49,21 @@ class BudgetItemManager
 
         //get item and make the designated modifiacations to item
         switch(typeOfEdit) {
-            case 0 -> BudgetList.get(indexNumber).setName(editedAtribute.getNewValue().toString()); //Change the item name
-            case 1 -> BudgetList.get(indexNumber).setRate(Double.parseDouble(editedAtribute.getNewValue().toString())); //Change the rate
-            case 2 -> BudgetList.get(indexNumber).setCategory(editedAtribute.getNewValue().toString()); //Change the category name
-            case 3 -> BudgetList.get(indexNumber).setPeriod(BudgetItem.Period.valueOf(editedAtribute.getNewValue().toString())); //Chnage the PeriodType
-            case 4 -> BudgetList.get(indexNumber).setPeriodAmount(Double.parseDouble(editedAtribute.getNewValue().toString())); //Change the periodAmount
+            case 0:
+                BudgetList.get(indexNumber).setName(editedAtribute.getNewValue().toString()); //Change the item name
+                break;
+            case 1:
+                BudgetList.get(indexNumber).setRate(Double.parseDouble(editedAtribute.getNewValue().toString())); //Change the rate
+                break;
+            case 2:
+                BudgetList.get(indexNumber).setCategory(editedAtribute.getNewValue().toString()); //Change the category name
+                break;
+            case 3:
+                BudgetList.get(indexNumber).setPeriod(BudgetItem.Period.valueOf(editedAtribute.getNewValue().toString())); //Chnage the PeriodType
+                break;
+            case 4:
+                BudgetList.get(indexNumber).setPeriodAmount(Double.parseDouble(editedAtribute.getNewValue().toString())); //Change the periodAmount
+                break;
             case 5:
                 if(BudgetList.get(indexNumber).getClass().getSimpleName() == "IncomeItem"){ //modified item is an IncomeItem
                     IncomeItem holder = (IncomeItem)BudgetList.get(indexNumber);
@@ -66,25 +77,28 @@ class BudgetItemManager
         }
     }
 
-    public void deleteBudgetItem(int indexNumber, boolean isExpense)
+    public void deleteBudgetItem(int indexNumber)
     {
         BudgetList.remove(indexNumber);
     }
 
-
-    // Change the three things
-    public void saveFileData(String textfilename) //store the contents of the array into a text file
-    {
-
-        TextFileWriter filewrite = new TextFileWriter();
-        filewrite.saveFileData(textfilename, IncomeList, ExpenseList);
+    public ObservableList<BudgetItem> getList(){
+        return BudgetList;
     }
 
-    public void loadFileData(String textfilename) //Request to get data from file and create budgetItems
-    {
-        TextFileReader fileread = new TextFileReader();
-        fileread.saveFileData(textfilename, IncomeList, ExpenseList);
-
-    }
+//    // Change the three things
+//    public void saveFileData(String textfilename) //store the contents of the array into a text file
+//    {
+//
+//        TextFileWriter filewrite = new TextFileWriter();
+//        filewrite.saveFileData(textfilename, IncomeList, ExpenseList);
+//    }
+//
+//    public void loadFileData(String textfilename) //Request to get data from file and create budgetItems
+//    {
+//        TextFileReader fileread = new TextFileReader();
+//        fileread.saveFileData(textfilename, IncomeList, ExpenseList);
+//
+//    }
 
 }

@@ -8,6 +8,7 @@ public abstract class BudgetItem {
     private String category; //group were the income or expense falls under
     private Period period; //Used to determine the paying period for income source. Note "None" used for expense only
     private double periodAmount; //Number of times for payPeriod
+    private String SD;
 
 
     //Constructor for BudgetItem
@@ -30,6 +31,13 @@ public abstract class BudgetItem {
         this.name = name;
     }
 
+    public void setSD(String SD) {
+        this.SD = SD;
+    }
+
+    public String getSD() {
+        return SD;
+    }
 
     //Getter and setter for rate
     public double getRate() {

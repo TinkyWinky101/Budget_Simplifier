@@ -1,20 +1,41 @@
 package com.example.budget_simplifier_v2;
 
+import javafx.beans.Observable;
+import javafx.beans.property.Property;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.ComboBoxTableCell;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.util.converter.DoubleStringConverter;
 
-public class ItemPageController {
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+public class ItemPageController implements Initializable {
 
     @FXML
     private AnchorPane AnchorThing;
 
     @FXML
     private VBox Box;
+
+    @FXML
+    private MenuItem ReportOption;
 
     @FXML
     private TableColumn<BudgetItem, String> SD;
@@ -26,9 +47,6 @@ public class ItemPageController {
     private TableColumn<BudgetItem, String> category;
 
     @FXML
-    private Menu editOption;
-
-    @FXML
     private TableView<BudgetItem> expenseTable;
 
     @FXML
@@ -38,149 +56,151 @@ public class ItemPageController {
     private Menu helpOption;
 
     @FXML
+    private MenuItem instructions;
+
+    @FXML
+    private MenuItem loadItemOption;
+
+    @FXML
     private MenuBar menu;
 
     @FXML
     private TableColumn<BudgetItem, String> name;
 
     @FXML
+    private MenuItem newBudgetItemThing;
+
+    @FXML
     private TableColumn<BudgetItem, BudgetItem.Period> periodType;
 
     @FXML
-    private TableColumn<BudgetItem, Integer> rate;
+    private MenuItem quitChoice;
 
+    @FXML
+    private MenuItem deleteOption;
+
+    @FXML
+    private TableColumn<BudgetItem, Double> rate;
+
+    @FXML
+    private MenuItem saveItemsOption;
+
+
+    private BudgetItemManager itemManager = new BudgetItemManager();
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+
+        //List used for periodType cell in income table
+        ObservableList<BudgetItem.Period> comboBoxOption = FXCollections.observableArrayList(
+                BudgetItem.Period.NONE, BudgetItem.Period.HOURLY, BudgetItem.Period.DAILY, BudgetItem.Period.WEEKLY, BudgetItem.Period.MONTHLY,
+                BudgetItem.Period.YEARLY
+        );
+
+        //Big table
+        name.setCellValueFactory(new PropertyValueFactory<>("name"));
+        rate.setCellValueFactory(new PropertyValueFactory<>("rate"));
+        category.setCellValueFactory(new PropertyValueFactory<>("category"));
+        SD.setCellValueFactory(new PropertyValueFactory<>("SD"));
+        periodType.setCellValueFactory(new PropertyValueFactory<>("period"));
+        amount.setCellValueFactory(new PropertyValueFactory<>("periodAmount"));
+
+        //for editing
+        name.setCellFactory(TextFieldTableCell.forTableColumn());
+        rate.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        category.setCellFactory(TextFieldTableCell.forTableColumn());
+        periodType.setCellFactory(ComboBoxTableCell.forTableColumn(comboBoxOption));
+        amount.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        SD.setCellFactory(TextFieldTableCell.forTableColumn());
+
+
+        expenseTable.setItems(itemManager.getList());
+        itemManager.displayAllItems();
+        //color a row font red if it is an expense item
+        expenseTable.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected boolean isItemChanged(BudgetItem oldItem, BudgetItem newItem) {
+                return true;
+            }
+
+            @Override
+            protected void updateItem(BudgetItem item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item != null && item instanceof ExpenseItem) {
+                    System.out.println(item.getName());
+                    setStyle("-fx-text-fill: red;");
+                }
+            }
+        });
+
+    }
+
+    @FXML
+    void createNewItem(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ExpenseScreen.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        Stage primaryStage = new Stage();
+        primaryStage.setTitle("Expense Form");
+        primaryStage.setScene(scene);
+        primaryStage.initModality(Modality.APPLICATION_MODAL);
+        primaryStage.show();
+    }
+
+    @FXML
+    void loadItemFromFile(ActionEvent event) {
+
+    }
+
+    @FXML
+    void pullInstructions(ActionEvent event) {
+
+    }
+
+    @FXML
+    void quitApplication(ActionEvent event) {
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        a.setContentText("Close the application?");
+        Optional<ButtonType> choose = a.showAndWait();
+        if (choose.get() == ButtonType.OK) {
+            System.exit(0);
+        }
+    }
+
+    @FXML
+    void saveItemToFile(ActionEvent event) {
+
+    }
+
+
+    @FXML
+    void showReport(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ReportScreen.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        Stage primaryStage = new Stage();
+        primaryStage.setTitle("Report");
+        primaryStage.setScene(scene);
+        primaryStage.initModality(Modality.APPLICATION_MODAL);
+        primaryStage.show();
+    }
+
+
+    //Used to remove one or multiple row from both tables
+    @FXML
+    public void deleteSelection() {
+        //Remove
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        a.setContentText("Delete selection?");
+        Optional<ButtonType> choose = a.showAndWait();
+        if (choose.get() == ButtonType.OK) {
+            int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex();
+            if (selectedRowIndex > -1)
+                itemManager.deleteBudgetItem(selectedRowIndex);
+        }
+        //Get the index from the income table and delete the item from that index
+
+    }
 }
-//    //Other variables
-//    private BudgetItemManager ItemManager = new BudgetItemManager();
-//
-//    @Override
-//    public void initialize(URL url, ResourceBundle resourceBundle) {
-//
-//        //List used for the periodType cell in income table
-//        ObservableList<BudgetItem.Period> comboBoxOption = FXCollections.observableArrayList(
-//                BudgetItem.Period.NONE, BudgetItem.Period.HOURLY, BudgetItem.Period.DAILY, BudgetItem.Period.WEEKLY, BudgetItem.Period.MONTHLY,
-//                BudgetItem.Period.YEARLY
-//        );
-//
-//
-//        //For the expense Table
-//        expenseItemNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-//        expenseItemRateColumn.setCellValueFactory(new PropertyValueFactory<>("rate"));
-//        expenseItemCategoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-//        expenseItemPeriodTypeColumn.setCellValueFactory(new PropertyValueFactory<>("period"));
-//        expenseItemPeriodAmountColumn.setCellValueFactory(new PropertyValueFactory<>("periodAmount"));
-//        expenseItemDestinationColumn.setCellValueFactory(new PropertyValueFactory<>("destination"));
-//
-//        //For editing the selected column of a row in expense table
-//        expenseItemNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-//        expenseItemRateColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-//        expenseItemCategoryColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-//        expenseItemPeriodTypeColumn.setCellFactory(ComboBoxTableCell.forTableColumn(comboBoxOption));
-//        expenseItemPeriodAmountColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-//        expenseItemDestinationColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-//
-//        //Display the items of the table from the observable list
-//        expenseTable.setItems(ItemManager.getExpenseList());
-//
-//        //For the income Table
-//        incomeItemNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-//        incomeItemRateColumn.setCellValueFactory(new PropertyValueFactory<>("rate"));
-//        incomeItemCategoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-//        incomeItemPeriodTypeColumn.setCellValueFactory(new PropertyValueFactory<>("period"));
-//        incomeItemPeriodAmountColumn.setCellValueFactory(new PropertyValueFactory<>("periodAmount"));
-//        incomeItemSourceColumn.setCellValueFactory(new PropertyValueFactory<>("source"));
-//
-//        //
-//        incomeItemNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-//        incomeItemRateColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-//        incomeItemCategoryColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-//
-//
-//        incomeItemPeriodTypeColumn.setCellFactory(ComboBoxTableCell.forTableColumn(comboBoxOption));
-//
-//        incomeItemPeriodAmountColumn.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-//        incomeItemSourceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-//
-//        //Display the items of the table from the observable list
-//        incomeTable.setItems(ItemManager.getIncomeList());
-//
-//        //For the combooBox input
-//        ObservableList<String> comboBoxOptions = FXCollections.observableArrayList("None", "Hourly", "Daily", "Weekly","Monthly", "Yearly");
-//        periodTypeComboBox.setItems(comboBoxOptions);
-//    }
-//
-//    //Add an item to table with the user data
-//    @FXML public void addItemToTable()
-//    {
-//
-//        Alert a = new Alert(Alert.AlertType.NONE); //Set up alert object
-//
-//        //First determine if all fields were filled out
-//        if(nameTextField.getText().isEmpty())
-//            return;
-//        else if(rateTextField.getText().isEmpty())
-//            return;
-//        else if(categoryTextField.getText().isEmpty())
-//            return;
-//        else if(periodTypeComboBox.getValue()==null)
-//            return;
-//        else if(periodAmountTextField.getText().isEmpty())
-//            return;
-//        else if(sourceOrDestinationTextField.getText().isEmpty())
-//            return;
-//
-//
-//        try //Determine if the inputs entered here were incorrect data types
-//        {
-//            double rateInput = Double.parseDouble(rateTextField.getText());
-//            double periodAmountInput = Double.parseDouble(periodAmountTextField.getText());
-//        }
-//        catch (Exception e) {
-//            a.setAlertType(Alert.AlertType.ERROR);
-//            a.setContentText("Incorrect Data Type");
-//            a.show();
-//            return; //exit
-//        }
-//
-//        //Get the info from the text fields
-//        String nameInput = nameTextField.getText();
-//        String categoryInput = categoryTextField.getText();
-//        String sourceOrDestinationInput = sourceOrDestinationTextField.getText();
-//
-//        double BudgetItemRate =  Double.parseDouble(rateTextField.getText());
-//
-//        double BudgetItemPeriodAmountInput = Double.parseDouble(periodAmountTextField.getText());
-//
-//        String BudgetItemPeriodTypeInput = periodTypeComboBox.getValue(); //Get the string input from checkbox
-//        BudgetItemPeriodTypeInput=BudgetItemPeriodTypeInput.toUpperCase();
-//        BudgetItem.Period PeriodStorage = BudgetItem.Period.valueOf(BudgetItemPeriodTypeInput); //Convert the string to period
-//
-//        //Check if the user clicked on income
-//        if(incomeRadioButton.isSelected()) {
-//            ItemManager.addBudgetItem(false, nameInput, BudgetItemRate, categoryInput, PeriodStorage, BudgetItemPeriodAmountInput, sourceOrDestinationInput);
-//        }
-//
-//        //Check if the user clicked on expense
-//        else if(expenseRadioButton.isSelected()){
-//            ItemManager.addBudgetItem(true, nameInput, BudgetItemRate, categoryInput, PeriodStorage, BudgetItemPeriodAmountInput, sourceOrDestinationInput);
-//        }
-//
-//    }
-//
-//    //Used to remove one or multiple row from both tables
-//    @FXML public void removeItemFromList(){
-//        //Remove
-//
-//        //Get the index from the income table and delete the item from that index
-//        int selectedRowIndex = incomeTable.getSelectionModel().getSelectedIndex();
-//        if(selectedRowIndex>-1)
-//            ItemManager.deleteBudgetItem(selectedRowIndex, false);
-//
-//        //Get index from the expense table and delete the item from that index
-//        selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex();
-//        if(selectedRowIndex>-1)
-//            ItemManager.deleteBudgetItem(selectedRowIndex, true);
-//    }
 //
 //
 //    @FXML public void loadButtonClicked()

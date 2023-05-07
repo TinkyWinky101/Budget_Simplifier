@@ -4,25 +4,24 @@ import com.example.budget_simplifier_v2.BudgetItem;
 
 public class ExpenseItem extends BudgetItem {
     //Data members
-    private String destination;
     private double calculateExpenseTotal;
     //constructors
     ExpenseItem(String name, double rate, String category, Period period, double periodAmount, String destination)
     {
         super(name, rate, category, period, periodAmount);
-        this.destination = destination;
+        super.setSD(destination);
     }
 
 
     //Methods
     public String getDestination() //Get destination
     {
-        return destination;
+        return super.getSD();
     }
 
     public void setDestination(String destinationName) //set destination
     {
-        destination = destinationName;
+        super.setSD(destinationName);
     }
 
 
