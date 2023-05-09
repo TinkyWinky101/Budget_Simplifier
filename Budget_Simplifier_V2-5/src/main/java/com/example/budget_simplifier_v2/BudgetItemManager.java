@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList; // For ObservableLists
 import javafx.scene.control.TableColumn;
 
+import java.io.File;
+
 class BudgetItemManager
 {
     //Observable List containing incomes and expenses together
@@ -86,19 +88,19 @@ class BudgetItemManager
         return BudgetList;
     }
 
-//    // Change the three things
-//    public void saveFileData(String textfilename) //store the contents of the array into a text file
-//    {
+    // Change the three things
+    public void saveFileData(String textfilename) //store the contents of the array into a text file
+    {
+
+        TextFileWriter filewrite = new TextFileWriter();
+        filewrite.saveFileData(textfilename, BudgetList);
+    }
 //
-//        TextFileWriter filewrite = new TextFileWriter();
-//        filewrite.saveFileData(textfilename, IncomeList, ExpenseList);
-//    }
-//
-//    public void loadFileData(String textfilename) //Request to get data from file and create budgetItems
-//    {
-//        TextFileReader fileread = new TextFileReader();
-//        fileread.saveFileData(textfilename, IncomeList, ExpenseList);
-//
-//    }
+    public void loadFileData(File file) //Request to get data from file and create budgetItems
+    {
+        TextFileReader fileread = new TextFileReader();
+        fileread.saveFileData(file, BudgetList);
+
+    }
 
 }

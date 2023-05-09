@@ -16,13 +16,18 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -48,6 +53,7 @@ public class ItemPageController implements Initializable {
 
     @FXML
     private TableView<BudgetItem> expenseTable;
+
 
     @FXML
     private Menu fileOption;
@@ -98,6 +104,24 @@ public class ItemPageController implements Initializable {
                 BudgetItem.Period.YEARLY
         );
 
+        expenseTable.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(BudgetItem item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item instanceof ExpenseItem) {
+                    setStyle("-fx-text-background-color: red;");
+                } else if (item instanceof IncomeItem) {
+                    setStyle("-fx-text-background-color: black;");
+                } else {
+                    setStyle("");
+                }
+
+            }
+
+        });
+
+
         //Big table
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
         rate.setCellValueFactory(new PropertyValueFactory<>("rate"));
@@ -118,21 +142,6 @@ public class ItemPageController implements Initializable {
         expenseTable.setItems(itemManager.getList());
         itemManager.displayAllItems();
         //color a row font red if it is an expense item
-        expenseTable.setRowFactory(tv -> new TableRow<>() {
-            @Override
-            protected boolean isItemChanged(BudgetItem oldItem, BudgetItem newItem) {
-                return true;
-            }
-
-            @Override
-            protected void updateItem(BudgetItem item, boolean empty) {
-                super.updateItem(item, empty);
-                if (item != null && item instanceof ExpenseItem) {
-                    System.out.println(item.getName());
-                    setStyle("-fx-text-fill: red;");
-                }
-            }
-        });
 
     }
 
@@ -149,7 +158,13 @@ public class ItemPageController implements Initializable {
 
     @FXML
     void loadItemFromFile(ActionEvent event) {
-
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files (.txt)", "*.txt"));
+        chooser.setInitialDirectory(Paths.get(".").toAbsolutePath().normalize().toFile());
+        chooser.setTitle("Load File");
+        Stage stage = new Stage();
+        File selectedFile = chooser.showOpenDialog(stage);
+        itemManager.loadFileData(selectedFile);
     }
 
     @FXML
@@ -169,7 +184,15 @@ public class ItemPageController implements Initializable {
 
     @FXML
     void saveItemToFile(ActionEvent event) {
-
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files (.txt)", "*.txt"));
+        chooser.setInitialDirectory(Paths.get(".").toAbsolutePath().normalize().toFile());
+        chooser.setTitle("Save File");
+        Stage stage = new Stage();
+        File selectedFile = chooser.showSaveDialog(stage);
+        if (selectedFile != null) {
+            itemManager.saveFileData(selectedFile.getName());
+        }
     }
 
 
@@ -200,221 +223,96 @@ public class ItemPageController implements Initializable {
         //Get the index from the income table and delete the item from that index
 
     }
+
+    @FXML
+    public void EditNameCell(TableColumn.CellEditEvent newIncomeNameEdit) {
+        //Check if the income table was Selected
+        int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex();
+
+
+        if (selectedRowIndex > -1) {
+            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
+            itemManager.modifyBudgetItem(selectedRowIndex, false, newIncomeNameEdit, 0);
+        }
+
+    }
+
+
+    @FXML
+    public void EditRateCell(TableColumn.CellEditEvent newExpenseRateEdit) {
+        Alert a = new Alert(Alert.AlertType.NONE); //Set up alert object
+        int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex(); //get the index from expense table
+
+        try {
+            double newExpenseRate = Double.parseDouble(newExpenseRateEdit.getNewValue().toString());
+        } catch (Exception e) {
+
+            a.setAlertType(Alert.AlertType.ERROR);
+            a.setContentText("Incorrect Data Type");
+            a.show();
+            return;
+        }
+
+
+        if (selectedRowIndex > -1) {
+            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
+            itemManager.modifyBudgetItem(selectedRowIndex, true, newExpenseRateEdit, 1);
+        }
+
+    }
+
+    @FXML
+    public void EditCategoryCell(TableColumn.CellEditEvent newExpenseCategoryEdit) {
+        int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex();
+
+        if (selectedRowIndex > -1) {
+            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
+            itemManager.modifyBudgetItem(selectedRowIndex, true, newExpenseCategoryEdit, 2);
+        }
+    }
+
+    @FXML
+    public void EditPeriodType(TableColumn.CellEditEvent newIncomePeriodTypeEdit) {
+        int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex();
+
+        if (selectedRowIndex > -1) {
+            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
+            itemManager.modifyBudgetItem(selectedRowIndex, false, newIncomePeriodTypeEdit, 3);
+        }
+    }
+
+    @FXML
+    public void EditPeriodAmount(TableColumn.CellEditEvent newIncomePeriodAmountEdit) {
+        int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex();
+
+
+        Alert a = new Alert(Alert.AlertType.NONE); //Set up alert object
+        try {
+            double newIncomePeriodAmount = Double.parseDouble(newIncomePeriodAmountEdit.getNewValue().toString());
+        } catch (Exception e) {
+
+
+            a.setAlertType(Alert.AlertType.ERROR);
+            a.setContentText("Incorrect Data Type");
+            a.show();
+            return;
+        }
+
+        if (selectedRowIndex > -1) {
+            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
+            itemManager.modifyBudgetItem(selectedRowIndex, false, newIncomePeriodAmountEdit, 4);
+        }
+    }
+
+    @FXML
+    public void EditSD(TableColumn.CellEditEvent newIncomeSourceEdit) {
+        int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex();
+
+        if (selectedRowIndex > -1) {
+            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
+            itemManager.modifyBudgetItem(selectedRowIndex, false, newIncomeSourceEdit, 5);
+        }
+    }
+
+
 }
-//
-//
-//    @FXML public void loadButtonClicked()
-//    {
-//        String fileName;
-//        fileName=fileNameField.getText(); //Obtain the file name
-//        ItemManager.loadFileData(fileName); //have the file populate it's data to the Income and Expense observable list
-//    }
-//
-//    @FXML public void saveButtonClicked()
-//    {
-//        String fileName;
-//        fileName=fileNameField.getText();
-//        ItemManager.saveFileData(fileName);
-//    }
-//
-//    @FXML public void EditIncomeNameCell(TableColumn.CellEditEvent newIncomeNameEdit)
-//    {
-//        //Check if the income table was Selected
-//        int selectedRowIndex = incomeTable.getSelectionModel().getSelectedIndex();
-//
-//
-//        if(selectedRowIndex>-1)
-//        {
-//            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
-//            ItemManager.modifyBudgetItem(selectedRowIndex, false, newIncomeNameEdit, 0);
-//        }
-//
-//    }
-//
-//    @FXML public void EditExpenseNameCell(TableColumn.CellEditEvent newExpenseNameEdit)
-//    {
-//        //Check if the expense table was Selected
-//        int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex();
-//
-//
-//        if(selectedRowIndex>-1)
-//        {
-//            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
-//            ItemManager.modifyBudgetItem(selectedRowIndex, true, newExpenseNameEdit, 0);
-//        }
-//
-//    }
-//
-//    @FXML public void EditExpenseRateCell(TableColumn.CellEditEvent newExpenseRateEdit)
-//    {
-//        Alert a = new Alert(Alert.AlertType.NONE); //Set up alert object
-//        int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex(); //get the index from expense table
-//
-//        try
-//        {
-//            double newExpenseRate = Double.parseDouble(newExpenseRateEdit.getNewValue().toString());
-//        } catch (Exception e) {
-//
-//            a.setAlertType(Alert.AlertType.ERROR);
-//            a.setContentText("Incorrect Data Type");
-//            a.show();
-//            return;
-//        }
-//
-//
-//        if(selectedRowIndex>-1)
-//        {
-//            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
-//            ItemManager.modifyBudgetItem(selectedRowIndex, true, newExpenseRateEdit, 1);
-//        }
-//
-//    }
-//
-//    @FXML public void EditIncomeRateCell(TableColumn.CellEditEvent newIncomeRateEdit)
-//    {
-//        int selectedRowIndex = incomeTable.getSelectionModel().getSelectedIndex();
-//
-//        Alert a = new Alert(Alert.AlertType.NONE); //Set up alert object
-//        try
-//        {
-//            double newIncomeRate = Double.parseDouble(newIncomeRateEdit.getNewValue().toString());
-//        } catch (Exception e) {
-//
-//            a.setAlertType(Alert.AlertType.ERROR);
-//            a.setContentText("Incorrect Data Type");
-//            a.show();
-//            return;
-//        }
-//
-//        if(selectedRowIndex>-1)
-//        {
-//            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
-//            ItemManager.modifyBudgetItem(selectedRowIndex, false, newIncomeRateEdit, 1);
-//        }
-//    }
-//
-//    @FXML public void EditIncomeCategoryCell(TableColumn.CellEditEvent newIncomeCategoryEdit)
-//    {
-//        int selectedRowIndex = incomeTable.getSelectionModel().getSelectedIndex();
-//
-//        if(selectedRowIndex>-1)
-//        {
-//            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
-//            ItemManager.modifyBudgetItem(selectedRowIndex, false, newIncomeCategoryEdit, 2);
-//        }
-//    }
-//
-//    @FXML public void EditExpenseCategory(TableColumn.CellEditEvent newExpenseCategoryEdit)
-//    {
-//        int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex();
-//
-//        if(selectedRowIndex>-1)
-//        {
-//            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
-//            ItemManager.modifyBudgetItem(selectedRowIndex, true, newExpenseCategoryEdit, 2);
-//        }
-//    }
-//
-//    @FXML public void EditIncomePeriodType(TableColumn.CellEditEvent newIncomePeriodTypeEdit)
-//    {
-//        int selectedRowIndex = incomeTable.getSelectionModel().getSelectedIndex();
-//
-//        if(selectedRowIndex>-1)
-//        {
-//            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
-//            ItemManager.modifyBudgetItem(selectedRowIndex, false, newIncomePeriodTypeEdit, 3);
-//        }
-//    }
-//
-//    @FXML public void EditExpensePeriodType(TableColumn.CellEditEvent newExpensePeriodTypeEdit)
-//    {
-//        int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex();
-//
-//
-//        if(selectedRowIndex>-1)
-//        {
-//            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
-//            ItemManager.modifyBudgetItem(selectedRowIndex, true, newExpensePeriodTypeEdit, 3);
-//        }
-//    }
-//
-//    @FXML public void EditExpensePeriodAmount(TableColumn.CellEditEvent newExpensePeriodAmountEdit)
-//    {
-//        int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex();
-//
-//        Alert a = new Alert(Alert.AlertType.NONE); //Set up alert object
-//        try
-//        {
-//            double newExpensePeriodAmount = Double.parseDouble(newExpensePeriodAmountEdit.getNewValue().toString());
-//        } catch (Exception e) {
-//
-//            a.setAlertType(Alert.AlertType.ERROR);
-//            a.setContentText("Incorrect Data Type");
-//            a.show();
-//            return;
-//        }
-//
-//        if(selectedRowIndex>-1)
-//        {
-//            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
-//            ItemManager.modifyBudgetItem(selectedRowIndex, true, newExpensePeriodAmountEdit, 4);
-//        }
-//    }
-//
-//    @FXML public void EditIncomePeriodAmount(TableColumn.CellEditEvent newIncomePeriodAmountEdit)
-//    {
-//        int selectedRowIndex = incomeTable.getSelectionModel().getSelectedIndex();
-//
-//
-//        Alert a = new Alert(Alert.AlertType.NONE); //Set up alert object
-//        try
-//        {
-//            double newIncomePeriodAmount = Double.parseDouble(newIncomePeriodAmountEdit.getNewValue().toString());
-//        } catch (Exception e) {
-//
-//
-//            a.setAlertType(Alert.AlertType.ERROR);
-//            a.setContentText("Incorrect Data Type");
-//            a.show();
-//            return;
-//        }
-//
-//        if(selectedRowIndex>-1)
-//        {
-//            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
-//            ItemManager.modifyBudgetItem(selectedRowIndex, false, newIncomePeriodAmountEdit, 4);
-//        }
-//    }
-//
-//    @FXML public void EditIncomeSource(TableColumn.CellEditEvent newIncomeSourceEdit)
-//    {
-//        int selectedRowIndex = incomeTable.getSelectionModel().getSelectedIndex();
-//
-//        if(selectedRowIndex>-1)
-//        {
-//            //Call the modify funtion with the paramenters false for isExpense, idexNumber for selected row, and number for what type of edit they made, and the cell edit event
-//            ItemManager.modifyBudgetItem(selectedRowIndex, false, newIncomeSourceEdit, 5);
-//        }
-//    }
-//
-//    @FXML public void EditExpenseDestination(TableColumn.CellEditEvent newExpenseDestinationEdit)
-//    {
-//        int selectedRowIndex = expenseTable.getSelectionModel().getSelectedIndex();
-//
-//        if(selectedRowIndex>-1)
-//        {
-//            //Call the modify funtion with the paramenters false for isExpense, indexNumber for selected row, and number for what type of edit they made, and the cell edit event
-//            ItemManager.modifyBudgetItem(selectedRowIndex, true, newExpenseDestinationEdit, 5);
-//        }
-//    }
-//
-//    @FXML void changeSceneToReportView(ActionEvent event) throws IOException {
-//        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("reportPage.fxml"));
-//        Parent root = fxmlLoader.load();
-//        Scene scene = new Scene(root);
-//        Stage window=(Stage)((Node)event.getSource()).getScene().getWindow();
-//        window.setScene(scene);
-//        window.setFullScreen(true);
-//    }
-//
-//}

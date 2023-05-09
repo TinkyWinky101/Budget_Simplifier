@@ -65,12 +65,12 @@
       <children>
             <TableView fx:id="expenseTable" prefHeight="375.0" prefWidth="640.0">
               <columns>
-                <TableColumn fx:id="name" prefWidth="91.0" text="Name" />
-                <TableColumn fx:id="rate" minWidth="0.0" prefWidth="81.0" text="Rate" />
-                  <TableColumn fx:id="category" prefWidth="93.0" text="Category" />
-                  <TableColumn fx:id="periodType" minWidth="0.0" prefWidth="130.0" text="Period Type" />
-                  <TableColumn fx:id="amount" prefWidth="124.0" text="Period Amount" />
-                  <TableColumn fx:id="SD" prefWidth="120.0" text="Source/Destination" />
+                <TableColumn fx:id="name" onEditCommit="#EditNameCell" prefWidth="91.0" text="Name" />
+                <TableColumn fx:id="rate" minWidth="0.0" onEditCommit="#EditRateCell" prefWidth="81.0" text="Rate" />
+                  <TableColumn fx:id="category" onEditCommit="#EditCategoryCell" prefWidth="93.0" text="Category" />
+                  <TableColumn fx:id="periodType" minWidth="0.0" onEditCommit="#EditPeriodType" prefWidth="130.0" text="Period Type" />
+                  <TableColumn fx:id="amount" onEditCommit="#EditPeriodAmount" prefWidth="124.0" text="Period Amount" />
+                  <TableColumn fx:id="SD" onEditCommit="#EditSD" prefWidth="120.0" text="Source/Destination" />
               </columns>
             </TableView>
       </children>

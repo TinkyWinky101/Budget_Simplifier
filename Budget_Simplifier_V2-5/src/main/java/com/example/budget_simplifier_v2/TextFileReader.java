@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class TextFileReader
 {
 
-    public void saveFileData(String textfilename, ObservableList<IncomeItem> IncomeList, ObservableList<ExpenseItem> ExpenseList)
+    public void saveFileData(File file, ObservableList<BudgetItem> BudgetList)
     {
         BudgetItemManager BudgetManagerCopy = new BudgetItemManager();
         boolean isExpense;
@@ -21,15 +21,9 @@ public class TextFileReader
         BudgetItem.Period loaded_period;
 
 
-
-        // Before we create the writer we need to check if the filename is ends with .txt and add it if it doesnt
-        if(!(textfilename.endsWith(".txt"))) // filename doesnt with .txt
-            textfilename += ".txt";            // add it to the filename
-
         try
         {
-            File filetoload = new File(textfilename); // Create file in try case
-            Scanner filereader = new Scanner(filetoload); // Create scanner from that file
+            Scanner filereader = new Scanner(file); // Create scanner from that file
             while(filereader.hasNextLine()) // While the reader has more lines
             {
                 if(filereader.nextLine().equals("Expense")) // Read the next line first to check if it says Income or Expense
