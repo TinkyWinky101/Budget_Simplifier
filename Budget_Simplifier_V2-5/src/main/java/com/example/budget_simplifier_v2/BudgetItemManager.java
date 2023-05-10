@@ -103,4 +103,16 @@ class BudgetItemManager
 
     }
 
+    public String getColor(BudgetItem item){
+        String colorString = "-fx-text-background-color:";
+        if(item instanceof ExpenseItem){
+            return colorString + " red;";
+        }
+        else if(item instanceof IncomeItem){
+            return colorString + " black;";
+        }
+        else {
+            return "";
+        }
+    }
 }

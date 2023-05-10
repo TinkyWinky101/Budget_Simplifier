@@ -108,14 +108,14 @@ public class ItemPageController implements Initializable {
             @Override
             protected void updateItem(BudgetItem item, boolean empty) {
                 super.updateItem(item, empty);
-
-                if (item instanceof ExpenseItem) {
-                    setStyle("-fx-text-background-color: red;");
-                } else if (item instanceof IncomeItem) {
-                    setStyle("-fx-text-background-color: black;");
-                } else {
-                    setStyle("");
-                }
+                setStyle(itemManager.getColor(item));
+//                if (item instanceof ExpenseItem) {
+//                    setStyle("-fx-text-background-color: red;");
+//                } else if (item instanceof IncomeItem) {
+//                    setStyle("-fx-text-background-color: black;");
+//                } else {
+//                    setStyle("");
+//                }
 
             }
 
