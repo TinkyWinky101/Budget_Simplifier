@@ -102,18 +102,18 @@ class BudgetItemManager
         }
     }
 
+    TextFileWriter filewrite = new TextFileWriter();
+    TextFileReader fileread = new TextFileReader();
+    FileMediator fileMediator = new FileMediator(filewrite, fileread);
 
     public void saveFileData(String textfilename) //store the contents of the array into a text file
     {
-
-        TextFileWriter filewrite = new TextFileWriter();
-        filewrite.saveFileData(textfilename, IncomeList, ExpenseList);
+        fileMediator.saveFileData(textfilename, IncomeList, ExpenseList);
     }
 
     public void loadFileData(String textfilename) //Request to get data from file and create budgetItems
     {
-        TextFileReader fileread = new TextFileReader();
-        fileread.saveFileData(textfilename, IncomeList, ExpenseList);
+        fileMediator.loadFileData(textfilename, IncomeList, ExpenseList);
 
     }
 

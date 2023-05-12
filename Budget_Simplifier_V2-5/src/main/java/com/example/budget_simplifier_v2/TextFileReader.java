@@ -11,16 +11,19 @@ import java.util.Scanner;
 
 public class TextFileReader
 {
+    FileReaderManager readerM;
 
-    public void saveFileData(String textfilename, ObservableList<IncomeItem> IncomeList, ObservableList<ExpenseItem> ExpenseList)
+    public void addReaderManager(FileReaderManager reader){
+        readerM = reader;
+    }
+
+    public void loadFileData(String textfilename, ObservableList<IncomeItem> IncomeList, ObservableList<ExpenseItem> ExpenseList)
     {
         BudgetItemManager BudgetManagerCopy = new BudgetItemManager();
         boolean isExpense;
         String convert_string, loaded_name, loaded_category, loaded_source;
         double loaded_rate, loaded_periodamount;
         BudgetItem.Period loaded_period;
-
-
 
         // Before we create the writer we need to check if the filename is ends with .txt and add it if it doesnt
         if(!(textfilename.endsWith(".txt"))) // filename doesnt with .txt

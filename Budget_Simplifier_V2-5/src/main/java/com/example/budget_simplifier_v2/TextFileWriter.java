@@ -11,6 +11,12 @@ import java.io.IOException;
 
 public class TextFileWriter implements FileWriterManager
 {
+    FileWriterManager writerM;
+
+    public void addWriterManager(FileWriterManager writer){
+        writerM = writer;
+    }
+
     public void saveFileData(String textfilename, ObservableList<IncomeItem> IncomeList, ObservableList<ExpenseItem> ExpenseList)
     {
         // The variables that the ObservableLists contain for each Income or Expense Object
