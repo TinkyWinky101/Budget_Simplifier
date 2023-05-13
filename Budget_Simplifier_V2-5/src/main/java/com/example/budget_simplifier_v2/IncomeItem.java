@@ -7,12 +7,15 @@ public class IncomeItem extends BudgetItem
     //Data members
 
     private double calculateIncomeTotal;
+    private String color;
+
     //Constructors
 
     IncomeItem(String name, double rate, String category, Period period, double periodAmount, String source)
     {
         super(name, rate, category, period, periodAmount);
         super.setSD(source);
+        color = "black";
     }
 
     //Methods
@@ -31,5 +34,10 @@ public class IncomeItem extends BudgetItem
         calculateIncomeTotal = getPeriodAmount() * getRate();
         calculateIncomeTotal = Math.round(calculateIncomeTotal * 100.0) / 100.0;
         return calculateIncomeTotal;
+    }
+
+    public String getColor()
+    {
+        return this.color;
     }
 }

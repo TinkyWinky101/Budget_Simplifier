@@ -1,7 +1,7 @@
 package com.example.budget_simplifier_v2;
 
-public abstract class BudgetItem {
-    public enum Period{NONE, HOURLY, DAILY, WEEKLY, MONTHLY, YEARLY};
+public abstract class BudgetItem implements BudgetItem_IF {
+
     //Data members
     private String name; //name of the item we create
     private double rate; //how much money you pay or receive
@@ -9,7 +9,7 @@ public abstract class BudgetItem {
     private Period period; //Used to determine the paying period for income source. Note "None" used for expense only
     private double periodAmount; //Number of times for payPeriod
     private String SD;
-
+    private String color;
 
     //Constructor for BudgetItem
     public BudgetItem(String name, double rate, String category, Period period,double periodAmount)
@@ -76,6 +76,11 @@ public abstract class BudgetItem {
 
     public void setPeriodAmount(double periodAmount) {
         this.periodAmount = periodAmount;
+    }
+
+    public String getColor()
+    {
+        return this.color;
     }
 
 }

@@ -43,16 +43,16 @@ public class ItemPageController implements Initializable {
     private MenuItem ReportOption;
 
     @FXML
-    private TableColumn<BudgetItem, String> SD;
+    private TableColumn<BudgetItem_IF, String> SD;
 
     @FXML
-    private TableColumn<BudgetItem, Double> amount;
+    private TableColumn<BudgetItem_IF, Double> amount;
 
     @FXML
-    private TableColumn<BudgetItem, String> category;
+    private TableColumn<BudgetItem_IF, String> category;
 
     @FXML
-    private TableView<BudgetItem> expenseTable;
+    private TableView<BudgetItem_IF> expenseTable;
 
 
     @FXML
@@ -71,13 +71,13 @@ public class ItemPageController implements Initializable {
     private MenuBar menu;
 
     @FXML
-    private TableColumn<BudgetItem, String> name;
+    private TableColumn<BudgetItem_IF, String> name;
 
     @FXML
     private MenuItem newBudgetItemThing;
 
     @FXML
-    private TableColumn<BudgetItem, BudgetItem.Period> periodType;
+    private TableColumn<BudgetItem_IF, BudgetItem_IF.Period> periodType;
 
     @FXML
     private MenuItem quitChoice;
@@ -86,7 +86,7 @@ public class ItemPageController implements Initializable {
     private MenuItem deleteOption;
 
     @FXML
-    private TableColumn<BudgetItem, Double> rate;
+    private TableColumn<BudgetItem_IF, Double> rate;
 
     @FXML
     private MenuItem saveItemsOption;
@@ -99,24 +99,27 @@ public class ItemPageController implements Initializable {
 
 
         //List used for periodType cell in income table
-        ObservableList<BudgetItem.Period> comboBoxOption = FXCollections.observableArrayList(
-                BudgetItem.Period.NONE, BudgetItem.Period.HOURLY, BudgetItem.Period.DAILY, BudgetItem.Period.WEEKLY, BudgetItem.Period.MONTHLY,
-                BudgetItem.Period.YEARLY
+        ObservableList<BudgetItem_IF.Period> comboBoxOption = FXCollections.observableArrayList(
+                BudgetItem_IF.Period.NONE, BudgetItem_IF.Period.HOURLY, BudgetItem_IF.Period.DAILY, BudgetItem_IF.Period.WEEKLY, BudgetItem_IF.Period.MONTHLY,
+                BudgetItem_IF.Period.YEARLY
         );
 
         expenseTable.setRowFactory(tv -> new TableRow<>() {
             @Override
-            protected void updateItem(BudgetItem item, boolean empty) {
-                super.updateItem(item, empty);
-                setStyle(itemManager.getColor(item));
-//                if (item instanceof ExpenseItem) {
-//                    setStyle("-fx-text-background-color: red;");
-//                } else if (item instanceof IncomeItem) {
-//                    setStyle("-fx-text-background-color: black;");
-//                } else {
-//                    setStyle("");
-//                }
-
+            protected void updateItem(BudgetItem_IF item, boolean empty) {
+                 super.updateItem(item, empty);
+                 if(!empty) // If not empty
+                    setStyle(itemManager.getColor(item));
+                 else
+                     setStyle("");
+                /*if (item instanceof ExpenseItem) {
+                    setStyle("-fx-text-background-color: red;");
+                } else if (item instanceof IncomeItem) {
+                    setStyle("-fx-text-background-color: black;");
+                } else {
+                    setStyle("");
+                }
+                 */
             }
 
         });

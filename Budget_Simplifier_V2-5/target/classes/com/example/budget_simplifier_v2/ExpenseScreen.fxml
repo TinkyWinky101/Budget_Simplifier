@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="VBoxThing" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="306.0" prefWidth="230.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.budget_simplifier_v2.ExpenseInputScreen">
+   <children>
+      <Label fx:id="ItemLabel" text="Item Type" textAlignment="CENTER" />
+      <RadioButton fx:id="income" mnemonicParsing="false" text="Income">
+         <toggleGroup>
+            <ToggleGroup fx:id="itemType" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="expense" mnemonicParsing="false" text="Expense" toggleGroup="$itemType" />
+      <VBox fx:id="Seperator" prefHeight="12.0" prefWidth="230.0" />
+      <Label fx:id="ItemInfoLabel" text="Item Info" />
+      <TextField fx:id="itemName" promptText="Enter Item Name" />
+      <TextField fx:id="itemRate" promptText="Enter Rate" />
+      <TextField fx:id="catName" promptText="Enter Category Name" />
+      <ChoiceBox fx:id="periodType" prefHeight="25.0" prefWidth="245.0" />
+      <TextField fx:id="periodAmount" promptText="Enter Period Amount" />
+      <TextField fx:id="SD" promptText="Enter Source/Destination Name" />
+      <Button fx:id="AddItemButton" mnemonicParsing="false" onAction="#submit" prefHeight="78.0" prefWidth="230.0" text="Add Item" />
+   </children>
+</VBox>

@@ -9,72 +9,87 @@ import java.io.File;
 class BudgetItemManager
 {
     //Observable List containing incomes and expenses together
-    private static ObservableList<BudgetItem> BudgetList = FXCollections.observableArrayList();
+    private static ObservableList<BudgetItem_IF> BudgetList = FXCollections.observableArrayList();
     private boolean loadFileUsed=false;
+    ItemUtility myUtility = ItemUtility.getInstance();
+    BudgetItemFactory_IF itemFactory;
 
-    //Constructor (i don't know if we need a construtor for BudgetManager)
+    FileMediator fileMediator = new FileMediator();
+
+    //Constructor (I don't know if we need a constructor for BudgetManager)
     BudgetItemManager(){}; // Default Constructor
 
     //Methods
     public void displayAllItems() //DisplayItems to user
     {
-        for (BudgetItem item : BudgetList) {
+        for (BudgetItem_IF item : BudgetList) {
             System.out.println(item.getName());
         }
     }
 
 
 
-    public void addBudgetItem(boolean isExpense, String itemName, double theRate, String theCategory, BudgetItem.Period thePeriod, double theAmountOfPeriods, String source) //Add item to one of the ObservableLists
+    public void addBudgetItem(boolean isExpense, String itemName, double theRate, String theCategory, BudgetItem_IF.Period thePeriod, double theAmountOfPeriods, String source) //Add item to one of the ObservableLists
     {
         //If item is expense
         if(isExpense)
         {
-            ExpenseItem budget_item = new ExpenseItem(itemName, theRate, theCategory, thePeriod, theAmountOfPeriods, source);
+            itemFactory = myUtility.createExpenseItemFactory();
+            BudgetItem_IF budget_item = itemFactory.createBudgetItem(itemName, theRate, theCategory, thePeriod, theAmountOfPeriods, source);
+
+            //ExpenseItem budget_item = new ExpenseItem(itemName, theRate, theCategory, thePeriod, theAmountOfPeriods, source);
+
             BudgetList.add(budget_item);
         }
         //If item is income
         else
         {
-            IncomeItem budget_item = new IncomeItem(itemName, theRate, theCategory, thePeriod, theAmountOfPeriods, source);
-            BudgetList.add(budget_item); //repeated code
+            itemFactory = myUtility.createIncomeItemFactory();
+            BudgetItem_IF budget_item = itemFactory.createBudgetItem(itemName, theRate, theCategory, thePeriod, theAmountOfPeriods, source);
+
+            //ExpenseItem budget_item = new ExpenseItem(itemName, theRate, theCategory, thePeriod, theAmountOfPeriods, source);
+
+            BudgetList.add(budget_item);
         }
 
 
     }
 
-    public void modifyBudgetItem(int indexNumber, boolean isExpense, TableColumn.CellEditEvent editedAtribute, int typeOfEdit) //Modify the item user selects with key(name)
+    public void modifyBudgetItem(int indexNumber, boolean isExpense, TableColumn.CellEditEvent editedAttribute, int typeOfEdit) //Modify the item user selects with key(name)
     {
         //get the key from user
 
-        //call getItemIndex to seach for item
+        //call getItemIndex to search for item
 
-        //get item and make the designated modifiacations to item
+        //get item and make the designated modifications to item
         switch(typeOfEdit) {
             case 0:
-                BudgetList.get(indexNumber).setName(editedAtribute.getNewValue().toString()); //Change the item name
+                BudgetList.get(indexNumber).setName(editedAttribute.getNewValue().toString()); //Change the item name
                 break;
             case 1:
-                BudgetList.get(indexNumber).setRate(Double.parseDouble(editedAtribute.getNewValue().toString())); //Change the rate
+                BudgetList.get(indexNumber).setRate(Double.parseDouble(editedAttribute.getNewValue().toString())); //Change the rate
                 break;
             case 2:
-                BudgetList.get(indexNumber).setCategory(editedAtribute.getNewValue().toString()); //Change the category name
+                BudgetList.get(indexNumber).setCategory(editedAttribute.getNewValue().toString()); //Change the category name
                 break;
             case 3:
-                BudgetList.get(indexNumber).setPeriod(BudgetItem.Period.valueOf(editedAtribute.getNewValue().toString())); //Chnage the PeriodType
+                BudgetList.get(indexNumber).setPeriod(BudgetItem_IF.Period.valueOf(editedAttribute.getNewValue().toString())); //Change the PeriodType
                 break;
             case 4:
-                BudgetList.get(indexNumber).setPeriodAmount(Double.parseDouble(editedAtribute.getNewValue().toString())); //Change the periodAmount
+                BudgetList.get(indexNumber).setPeriodAmount(Double.parseDouble(editedAttribute.getNewValue().toString())); //Change the periodAmount
                 break;
             case 5:
-                if(BudgetList.get(indexNumber).getClass().getSimpleName() == "IncomeItem"){ //modified item is an IncomeItem
+                BudgetItem_IF holder = BudgetList.get(indexNumber);
+                holder.setSD(editedAttribute.getNewValue().toString());
+
+               /* if(BudgetList.get(indexNumber).getClass().getSimpleName() == "IncomeItem"){ //modified item is an IncomeItem
                     IncomeItem holder = (IncomeItem)BudgetList.get(indexNumber);
-                    holder.setSource(editedAtribute.getNewValue().toString());
+                    holder.setSD(editedAttribute.getNewValue().toString());
                 }
                 else{
                     ExpenseItem holder = (ExpenseItem) BudgetList.get(indexNumber);
-                    holder.setDestination(editedAtribute.getNewValue().toString());
-                }
+                    holder.setSD(editedAttribute.getNewValue().toString());
+                }*/
 
         }
     }
@@ -84,28 +99,33 @@ class BudgetItemManager
         BudgetList.remove(indexNumber);
     }
 
-    public ObservableList<BudgetItem> getList(){
+    public ObservableList<BudgetItem_IF> getList(){
         return BudgetList;
     }
 
     // Change the three things
-    public void saveFileData(String textfilename) //store the contents of the array into a text file
+    public void saveFileData(String text_filename) //store the contents of the array into a text file
     {
 
-        TextFileWriter filewrite = new TextFileWriter();
-        filewrite.saveFileData(textfilename, BudgetList);
+        fileMediator.saveFileData(text_filename, BudgetList);
     }
 //
     public void loadFileData(File file) //Request to get data from file and create budgetItems
     {
-        TextFileReader fileread = new TextFileReader();
-        fileread.saveFileData(file, BudgetList);
+        fileMediator.loadFileData(file, BudgetList);
 
     }
 
-    public String getColor(BudgetItem item){
-        String colorString = "-fx-text-background-color:";
-        if(item instanceof ExpenseItem){
+    public String getColor(BudgetItem_IF item){
+        String colorString;
+        colorString = "-fx-text-background-color: " + item.getColor() + ';';
+
+        // Original Design, no longer used.
+
+        /*System.out.println(item.getClass().getSimpleName()); testing print
+        System.out.println(colorString); testing print
+
+       if(item instanceof ExpenseItem){
             return colorString + " red;";
         }
         else if(item instanceof IncomeItem){
@@ -114,5 +134,7 @@ class BudgetItemManager
         else {
             return "";
         }
+        */
+        return colorString;
     }
 }

@@ -23,10 +23,10 @@ public class reportPageController implements Initializable {
     private TableView<ExpenseItem> ExpanseTable;
 
     @FXML
-    private TableColumn<BudgetItem, Double> ExpanseTableAmount;
+    private TableColumn<BudgetItem_IF, Double> ExpanseTableAmount;
 
     @FXML
-    private TableColumn<BudgetItem, String> ExpanseTableName;
+    private TableColumn<BudgetItem_IF, String> ExpanseTableName;
 
     @FXML
     private PieChart ExpensePieChart;

@@ -1,8 +1,5 @@
 package com.example.budget_simplifier_v2;
 
-import com.example.budget_simplifier_v2.ExpenseItem;
-import com.example.budget_simplifier_v2.FileWriterManager;
-import com.example.budget_simplifier_v2.IncomeItem;
 import javafx.collections.ObservableList;
 
 import java.io.File;
@@ -11,7 +8,7 @@ import java.io.IOException;
 
 public class TextFileWriter
 {
-    public void saveFileData(String textfilename, ObservableList<BudgetItem> budgetList)
+    public void saveFileData(String textfilename, ObservableList<BudgetItem_IF> budgetList)
     {
         // The variables that the ObservableLists contain for each Income or Expense Object
         String text_to_add = ""; // The text that will be added to the application
@@ -44,7 +41,7 @@ public class TextFileWriter
         try {
             FileWriter writer = new FileWriter(textfilename); // Open file
 
-            for(BudgetItem budgetItem: budgetList){
+            for(BudgetItem_IF budgetItem: budgetList){
                 if(budgetItem instanceof IncomeItem){
                     text_to_add += "Income\n";
                 }

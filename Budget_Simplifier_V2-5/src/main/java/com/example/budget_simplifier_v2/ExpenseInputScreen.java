@@ -132,7 +132,7 @@ public class ExpenseInputScreen implements Initializable {
 
         String BudgetItemPeriodTypeInput = periodType.getValue(); //Get the string input from checkbox
         BudgetItemPeriodTypeInput = BudgetItemPeriodTypeInput.toUpperCase();
-        BudgetItem.Period PeriodStorage = BudgetItem.Period.valueOf(BudgetItemPeriodTypeInput); //Convert the string to period
+        BudgetItem_IF.Period PeriodStorage = BudgetItem_IF.Period.valueOf(BudgetItemPeriodTypeInput); //Convert the string to period
 
 
         // false if income, true if expense
