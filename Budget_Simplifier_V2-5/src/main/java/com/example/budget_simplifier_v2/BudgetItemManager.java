@@ -14,6 +14,8 @@ class BudgetItemManager
     ItemUtility myUtility = ItemUtility.getInstance();
     BudgetItemFactory_IF itemFactory;
 
+    FileMediator fileMediator = new FileMediator();
+
     //Constructor (I don't know if we need a constructor for BudgetManager)
     BudgetItemManager(){}; // Default Constructor
 
@@ -105,14 +107,12 @@ class BudgetItemManager
     public void saveFileData(String text_filename) //store the contents of the array into a text file
     {
 
-        TextFileWriter file_write = new TextFileWriter();
-        file_write.saveFileData(text_filename, BudgetList);
+        fileMediator.saveFileData(text_filename, BudgetList);
     }
 //
     public void loadFileData(File file) //Request to get data from file and create budgetItems
     {
-        TextFileReader file_read = new TextFileReader();
-        file_read.loadFileData(file, BudgetList);
+        fileMediator.loadFileData(file, BudgetList);
 
     }
 
