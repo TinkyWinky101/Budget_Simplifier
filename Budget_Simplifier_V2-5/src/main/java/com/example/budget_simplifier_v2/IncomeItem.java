@@ -5,25 +5,28 @@ import com.example.budget_simplifier_v2.BudgetItem;
 public class IncomeItem extends BudgetItem
 {
     //Data members
-    private String source;
+
     private double calculateIncomeTotal;
+    private String color;
+
     //Constructors
 
     IncomeItem(String name, double rate, String category, Period period, double periodAmount, String source)
     {
         super(name, rate, category, period, periodAmount);
-        this.source = source;
+        super.setSD(source);
+        color = "black";
     }
 
     //Methods
     public String getSource()
     {
-        return source;
+        return super.getSD();
     }
 
     public void setSource(String sourceName)
     {
-        source = sourceName;
+        super.setSD(sourceName);
     }
 
 
@@ -31,5 +34,10 @@ public class IncomeItem extends BudgetItem
         calculateIncomeTotal = getPeriodAmount() * getRate();
         calculateIncomeTotal = Math.round(calculateIncomeTotal * 100.0) / 100.0;
         return calculateIncomeTotal;
+    }
+
+    public String getColor()
+    {
+        return this.color;
     }
 }

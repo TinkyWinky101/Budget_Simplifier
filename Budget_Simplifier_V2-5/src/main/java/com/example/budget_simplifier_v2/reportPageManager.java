@@ -61,15 +61,26 @@ public class reportPageManager {
     }
 
     public ObservableList<ExpenseItem> getExpenseList() {
-
-        newExpenseList = newItemManager.getExpenseList();
+        newExpenseList.clear();
+        for(int i = 0; i < newItemManager.getList().size(); i++){
+            if(newItemManager.getList().get(i) instanceof ExpenseItem){
+                newExpenseList.add((ExpenseItem)newItemManager.getList().get(i));
+            }
+        }
+//        newExpenseList = newItemManager.getExpenseList();
         return newExpenseList;
     }
 
 
 
     public ObservableList<IncomeItem> getIncomeList() {
-        newIncomeList = newItemManager.getIncomeList();
+        newIncomeList.clear();
+        for(int i = 0; i < newItemManager.getList().size(); i++){
+            if(newItemManager.getList().get(i) instanceof IncomeItem){
+                newIncomeList.add((IncomeItem) newItemManager.getList().get(i));
+            }
+        }
+//        newIncomeList = newItemManager.getIncomeList();
         return newIncomeList;
     }
 

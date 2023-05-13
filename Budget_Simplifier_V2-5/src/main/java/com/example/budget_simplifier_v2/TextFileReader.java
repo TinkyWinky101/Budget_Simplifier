@@ -1,41 +1,38 @@
 package com.example.budget_simplifier_v2;
 
-import com.example.budget_simplifier_v2.BudgetItem;
 //import com.example.budget_simplifier_v2.App_Model.BudgetItemManager;
-import com.example.budget_simplifier_v2.ExpenseItem;
-import com.example.budget_simplifier_v2.IncomeItem;
 import javafx.collections.ObservableList;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class TextFileReader
 {
 
-    public void saveFileData(String textfilename, ObservableList<IncomeItem> IncomeList, ObservableList<ExpenseItem> ExpenseList)
+    public void loadFileData(File file, ObservableList<BudgetItem_IF> budgetList)
     {
-        BudgetItemManager BudgetManagerCopy = new BudgetItemManager();
+        // Bring in the Factory and Utility instance for adding to the list
+        ItemUtility myUtility = ItemUtility.getInstance();
+        BudgetItemFactory_IF itemFactory;
+
         boolean isExpense;
         String convert_string, loaded_name, loaded_category, loaded_source;
         double loaded_rate, loaded_periodamount;
         BudgetItem.Period loaded_period;
 
 
-
-        // Before we create the writer we need to check if the filename is ends with .txt and add it if it doesnt
-        if(!(textfilename.endsWith(".txt"))) // filename doesnt with .txt
-            textfilename += ".txt";            // add it to the filename
-
         try
         {
-            File filetoload = new File(textfilename); // Create file in try case
-            Scanner filereader = new Scanner(filetoload); // Create scanner from that file
+            Scanner filereader = new Scanner(file); // Create scanner from that file
             while(filereader.hasNextLine()) // While the reader has more lines
             {
                 if(filereader.nextLine().equals("Expense")) // Read the next line first to check if it says Income or Expense
-                    isExpense = true; // If "Expense," mark as Expense with true
+                    itemFactory = myUtility.createExpenseItemFactory();
                 else
-                    isExpense = false; // Mark as false if it's an income
+                    itemFactory = myUtility.createIncomeItemFactory();
 
                 // We now read and convert for all values before calling addBudgetItem()
                 loaded_name = filereader.nextLine();              // read in the name
@@ -49,7 +46,8 @@ public class TextFileReader
                 loaded_source = filereader.nextLine();
 
                 // File add the item
-                BudgetManagerCopy.addBudgetItem(isExpense, loaded_name, loaded_rate, loaded_category, loaded_period, loaded_periodamount, loaded_source);
+                BudgetItem_IF budget_item = itemFactory.createBudgetItem(loaded_name, loaded_rate, loaded_category, loaded_period, loaded_periodamount, loaded_source);
+                budgetList.add(budget_item);
             }
             filereader.close();
         }
